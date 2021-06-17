@@ -1,4 +1,4 @@
-from numpy import array
+from numpy import array, inf
 
 
 class TRP():
@@ -26,7 +26,7 @@ class TRP():
         # print(self.solution)
 
     def run(self):
-        lowest_cost = {"cost": 0, "u": 0, "v": 0, "address": 0}
+        lowest_cost = {"cost": inf, "u": 0, "v": 0, "address": 0}
 
         while len(self.q) != 0:
             while len(self.partial_solution) < self.p + 1:
@@ -43,23 +43,30 @@ class TRP():
                             lowest_cost["u"] = u
                             lowest_cost["v"] = v
                             lowest_cost["address"] = x
+                        # print(cost_expression)
 
+                # print(self.partial_solution)
                 position = self.partial_solution.index(lowest_cost["u"]) + 1
                 self.partial_solution.insert(position, lowest_cost["address"])
+                # print(self.partial_solution)
 
                 # reset lowest_cost after insert in solution
-                lowest_cost["cost"] = 0
+                # print(self.q)
+                # print(lowest_cost)
+                lowest_cost["cost"] = inf
                 self.q.remove(int(lowest_cost["address"]))
 
             self.solution.append(self.partial_solution)
 
             random_address1 = 0
             random_address2 = 1
-            self.partial_solution = [
-                0, self.q[random_address1], self.q[random_address2], 0]
-            self.q.pop(0)
-            self.q.pop(0)
 
-        self.solution.append(self.partial_solution)
+            if (len(self.q) > 0):
+                self.partial_solution = [
+                    0, self.q[random_address1], self.q[random_address2], 0]
+                self.q.pop(0)
+                self.q.pop(0)
+                if(len(self.q) == 0):
+                    self.solution.append(self.partial_solution)
 
         print(self.solution, 'solution')
