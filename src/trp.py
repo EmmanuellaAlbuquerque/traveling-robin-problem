@@ -1,4 +1,5 @@
 from numpy import array, inf
+from bisect import insort
 
 
 class TRP():
@@ -14,16 +15,48 @@ class TRP():
         self.p = p
         self.cost_matrix = array(cost_matrix)
         self.solution = []
-        self.partial_solution = [0, int(self.d/2), self.d - 1, 0]
+        self.partial_solution = [0]
         self.q = []
 
         for i in range(0, self.d):
             if i not in self.partial_solution:
                 self.q.append(i)
 
-        # print(self.q, 'q')
-        # print(self.cost_matrix)
-        # print(self.solution)
+        self.selectBestTriangle()
+        # self.selectRandomTriangle(int(self.d/2), self.d - 1)
+
+    def selectBestTriangle(self):
+        self.partial_solution = [0]
+        # encontra o triângulo no qual as cidades são as mais distantes possíveis
+        while len(self.partial_solution) < 3:
+            max_value = -inf
+            vertex = 0
+            for v in self.q:
+                last_element_solution = self.partial_solution[-1]
+                if (int(self.cost_matrix[last_element_solution][v]) > float(max_value)):
+                    max_value = self.cost_matrix[last_element_solution][v]
+                    vertex = v
+
+            self.partial_solution.append(vertex)
+            self.q.remove(vertex)
+        self.partial_solution.append(0)
+
+    def selectRandomTriangle(self, random_address1, random_address2):
+        # escolha aleatória de cidades
+        # self.partial_solution = [0, int(self.d/2), self.d - 1, 0]
+        # random_address1 = 0
+        # random_address2 = 1
+
+        # self.partial_solution = [
+        #     0, self.q[random_address1], self.q[random_address2], 0]
+        self.partial_solution = [
+            0, random_address1, random_address2, 0]
+        self.q.remove(random_address1)
+        self.q.remove(random_address2)
+
+    def printAnalysisOfCheaperInsertion(self, cost, x, u, v):
+        print('menor valor:', cost,
+              '-> vértice:', x, 'inserção entre: (', u, ',', v, ')')
 
     def run(self):
         lowest_cost = {"cost": inf, "u": 0, "v": 0, "address": 0}
@@ -43,29 +76,22 @@ class TRP():
                             lowest_cost["u"] = u
                             lowest_cost["v"] = v
                             lowest_cost["address"] = x
-                        # print(cost_expression)
 
-                # print(self.partial_solution)
+                        # self.printAnalysisOfCheaperInsertion(
+                        #     cost_expression, x, u, v)
                 position = self.partial_solution.index(lowest_cost["u"]) + 1
                 self.partial_solution.insert(position, lowest_cost["address"])
-                # print(self.partial_solution)
 
                 # reset lowest_cost after insert in solution
-                # print(self.q)
-                # print(lowest_cost)
                 lowest_cost["cost"] = inf
                 self.q.remove(int(lowest_cost["address"]))
 
             self.solution.append(self.partial_solution)
 
-            random_address1 = 0
-            random_address2 = 1
-
-            if (len(self.q) > 0):
-                self.partial_solution = [
-                    0, self.q[random_address1], self.q[random_address2], 0]
-                self.q.pop(0)
-                self.q.pop(0)
+            # selecting the new triangle
+            if (len(self.q) >= 2):
+                self.selectBestTriangle()
+                # self.selectRandomTriangle(self.q[0], self.q[1])
                 if(len(self.q) == 0):
                     self.solution.append(self.partial_solution)
 
