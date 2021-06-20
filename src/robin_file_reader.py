@@ -10,7 +10,7 @@ class RobinFileReader:
 
         cost_matrix = list()
         for element in content:
-            edges_costs = [number for number in element.split()
+            edges_costs = [int(number) for number in element.split()
                            if number.isdigit()]
             if (edges_costs):
                 cost_matrix.append(edges_costs)
