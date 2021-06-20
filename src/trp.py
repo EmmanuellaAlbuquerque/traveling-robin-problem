@@ -55,16 +55,19 @@ class TRP():
         agent_id = 1
         total_cost = 0
         agent_cost = 0
+        agent_cost_list = []
         for route in self.solution:
             agent_cost = 0
             for address in range(0, len(route) - 1):
                 address1 = route[address]
                 address2 = route[address+1]
                 agent_cost += int(self.cost_matrix[address1][address2])
-            print('(', 'agent', agent_id, ', cost:', agent_cost, ')')
+            # print('(', 'agent', agent_id, ', cost:', agent_cost, ')')
+            agent_cost_list.append({'agent_id': agent_id, 'cost': agent_cost})
             total_cost += agent_cost
             agent_id += 1
-        print('Total cost:', total_cost)
+        # print('Total cost:', total_cost)
+        return total_cost, agent_cost_list
 
     def run(self):
         lowest_cost = {"cost": inf, "u": 0, "v": 0, "address": 0}
@@ -115,5 +118,5 @@ class TRP():
             else:
                 break
 
-        print(self.solution, 'solution')
-        self.calculateTotalCost()
+        # print(self.solution, 'solution')
+        return self.solution

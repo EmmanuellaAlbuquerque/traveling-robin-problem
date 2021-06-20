@@ -14,3 +14,6 @@
 # inside src folder
 ~$ python3 main.py
 ```
+
+swap
+quanto maior a rota, menor vai ser impacto de mudanças nessa rota
