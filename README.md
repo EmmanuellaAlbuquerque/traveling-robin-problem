@@ -17,3 +17,6 @@
 
 swap
 quanto maior a rota, menor vai ser impacto de mudanças nessa rota
+
+
+grafo completo, conexo e simétrico(não-orientado)

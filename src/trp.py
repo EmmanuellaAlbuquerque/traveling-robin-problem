@@ -21,9 +21,6 @@ class TRP():
             if i not in self.partial_solution:
                 self.q.append(i)
 
-        self.selectBestTriangle()
-        # self.selectRandomTriangle(int(self.d/2), self.d - 1)
-
     def selectBestTriangle(self):
         self.partial_solution = [0]
         # encontra o triângulo no qual os endereços são os mais distantes possíveis
@@ -62,6 +59,8 @@ class TRP():
                 address1 = route[address]
                 address2 = route[address+1]
                 agent_cost += int(self.cost_matrix[address1][address2])
+                # print('a1', address1, 'a2', address2, 'cost',
+                #       int(self.cost_matrix[address1][address2]))
             # print('(', 'agent', agent_id, ', cost:', agent_cost, ')')
             agent_cost_list.append({'agent_id': agent_id, 'cost': agent_cost})
             total_cost += agent_cost
@@ -69,7 +68,12 @@ class TRP():
         # print('Total cost:', total_cost)
         return total_cost, agent_cost_list
 
-    def run(self):
+    def run(self, bt=True):
+        if (bt == True):
+            self.selectBestTriangle()
+        else:
+            self.selectRandomTriangle(int(self.d/2), self.d - 1)
+
         lowest_cost = {"cost": inf, "u": 0, "v": 0, "address": 0}
 
         while len(self.q) != 0:
@@ -107,12 +111,15 @@ class TRP():
 
             # selecting the new triangle
             if (len(self.q) >= 2):
-                self.selectBestTriangle()
-                # self.selectRandomTriangle(self.q[0], self.q[1])
+                if (bt == True):
+                    self.selectBestTriangle()
+                else:
+                    self.selectRandomTriangle(self.q[0], self.q[1])
+
                 if(len(self.q) == 0):
                     self.solution.append(self.partial_solution)
             elif (len(self.q)):  # case self.q == 1
-                print(self.q, 'q-rest')
+                # print(self.q, 'q-rest')
                 self.solution.append([0] + self.q + [0])
                 break
             else:

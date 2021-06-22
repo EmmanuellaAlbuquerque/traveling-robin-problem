@@ -1,8 +1,13 @@
+import os
+
+
 class RobinFileReader:
     def __init__(self, file):
         self.file = file
+        self.filename = os.path.basename(self.file.name)
 
     def getResult(self):
+        print('=>', self.filename)
         content = self.file.read().split("\n")
         dimension = [int(d) for d in content.pop(0).split() if d.isdigit()][0]
         p = [int(d) for d in content.pop(0).split() if d.isdigit()][0]
