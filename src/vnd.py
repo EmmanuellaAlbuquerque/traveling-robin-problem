@@ -1,10 +1,11 @@
 def swap(initial_solution, agent_list, cost_matrix):
+    best_value = float('inf')
+    best_i = 0
+    best_j = 0
+    best_s = 0
     for s_id in range(0, len(initial_solution)):
         s = initial_solution[s_id][:]
         oF = agent_list[s_id]['cost']
-        best_value = float('inf')
-        best_i = 0
-        best_j = 0
 
         # for with improved constant factors
         for i in range(1, len(s) - 1):
@@ -45,16 +46,21 @@ def swap(initial_solution, agent_list, cost_matrix):
                     best_value = oFLine
                     best_i = i
                     best_j = j
+                    best_s = s_id
                 # print('ObjectFunction(result):', oFLine)
         # print(
         #     '---------------------------------------------------------------------')
-        if best_value < agent_list[s_id]['cost']:
-            agent_list[s_id]['cost'] = best_value
-            initial_solution[s_id][best_i] = s[best_j]
-            initial_solution[s_id][best_j] = s[best_i]
-            print('\n', s, 'cost<initial>:', oF)
-            print('agent', s_id+1, initial_solution[s_id], 'cost<swap>:',
-                  agent_list[s_id]['cost'], 'best(i, j):', best_i, best_j, '\n')
-        else:
-            print('cost<swap>: notbetter, agent', s_id+1)
+    if best_value < agent_list[best_s]['cost']:
+        print('agent', best_s+1)
+        print(initial_solution[best_s],
+              'cost<initial>:', agent_list[best_s]['cost'])
+        agent_list[best_s]['cost'] = best_value
+        aux = initial_solution[best_s][best_i]
+        initial_solution[best_s][best_i] = initial_solution[best_s][best_j]
+        initial_solution[best_s][best_j] = aux
+        print(initial_solution[best_s], 'cost<swap>:',
+              agent_list[best_s]['cost'], 'best(i, j):', best_i, best_j, '\n')
+    else:
+        print('cost<swap>: notbetter, agent', best_s+1,
+              '<compared>: ', best_value, '<', agent_list[best_s]['cost'])
     return (initial_solution, agent_list)
