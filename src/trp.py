@@ -1,4 +1,5 @@
 from numpy import array, inf
+from random import randrange
 
 
 class TRP():
@@ -37,12 +38,24 @@ class TRP():
             self.q.remove(vertex)
         self.partial_solution.append(0)
 
-    def selectRandomTriangle(self, random_address1, random_address2):
+    def selectRandomTriangle(self):
         # encontra o triângulo escolhendo os endereços de forma aleatória
+        random_range = len(self.q)
+        random_address1 = randrange(random_range)
+        address1 = self.q.pop(random_address1)
+        random_address2 = randrange(random_range - 1)
+        address2 = self.q.pop(random_address2)
+
         self.partial_solution = [
-            0, random_address1, random_address2, 0]
-        self.q.remove(random_address1)
-        self.q.remove(random_address2)
+            0, address1, address2, 0]
+
+    def selectSequenceTriangle(self):
+        address1 = self.q[0]
+        address2 = self.q[1]
+        self.partial_solution = [
+            0, address1, address2, 0]
+        self.q.remove(address1)
+        self.q.remove(address2)
 
     def printAnalysisOfCheaperInsertion(self, cost, x, u, v):
         print('menor valor:', cost,
@@ -70,9 +83,10 @@ class TRP():
 
     def run(self, bt=True):
         if (bt == True):
-            self.selectBestTriangle()
+            # self.selectBestTriangle()
+            self.selectSequenceTriangle()
         else:
-            self.selectRandomTriangle(int(self.d/2), self.d - 1)
+            self.selectRandomTriangle()
 
         lowest_cost = {"cost": inf, "u": 0, "v": 0, "address": 0}
 
@@ -112,9 +126,10 @@ class TRP():
             # selecting the new triangle
             if (len(self.q) >= 2):
                 if (bt == True):
-                    self.selectBestTriangle()
+                    # self.selectBestTriangle()
+                    self.selectSequenceTriangle()
                 else:
-                    self.selectRandomTriangle(self.q[0], self.q[1])
+                    self.selectRandomTriangle()
 
                 if(len(self.q) == 0):
                     self.solution.append(self.partial_solution)

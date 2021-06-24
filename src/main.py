@@ -4,13 +4,13 @@ from trp import TRP
 from vnd import VND
 from copy import deepcopy
 
-# file_path = Path("../instances/n5.txt").absolute()
+file_path = Path("../instances/n5.txt").absolute()
 # file_path = Path("../instances/n10p4.txt").absolute()
 # file_path = Path("../instances/n15p5.txt").absolute()
 # file_path = Path("../instances/n29p7A.txt").absolute()
 # file_path = Path("../instances/n29p8B.txt").absolute()
 # file_path = Path("../instances/n40p11.txt").absolute()
-file_path = Path("../instances/n52p11.txt").absolute()
+# file_path = Path("../instances/n52p11.txt").absolute()
 
 # file_path = Path("../instances_apa_cup/cup1.txt").absolute()
 # file_path = Path("../instances_apa_cup/cup2.txt").absolute()
@@ -50,6 +50,7 @@ vnd = VND()
 # print(vnd_agent_list)
 print('variable neighbourhood descent solution')
 showSolution(vnd_solution)
+print('\n')
 
 print('total cost:', f(trp_agent_list))
 print('new total cost:', f(vnd_agent_list))
