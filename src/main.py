@@ -4,7 +4,8 @@ from trp import TRP
 from vnd import VND
 from copy import deepcopy
 
-file_path = Path("../instances/n5.txt").absolute()
+# file_path = Path("../instances/n5.txt").absolute()
+file_path = Path("../instances/n6.txt").absolute()
 # file_path = Path("../instances/n10p4.txt").absolute()
 # file_path = Path("../instances/n15p5.txt").absolute()
 # file_path = Path("../instances/n29p7A.txt").absolute()
@@ -38,7 +39,7 @@ print('constructive algorithm solution')
 trp = TRP(dimension, p, cost_matrix)
 trp_solution = trp.run()
 (initial_cost, trp_agent_list) = trp.calculateTotalCost()
-# print(agent_list)
+# print(trp_agent_list)
 showSolution(trp_solution)
 print('\n')
 
@@ -48,6 +49,7 @@ vnd = VND()
 (vnd_solution, vnd_agent_list) = vnd.run(
     deepcopy(trp_solution), deepcopy(trp_agent_list), cost_matrix)
 # print(vnd_agent_list)
+print('\n')
 print('variable neighbourhood descent solution')
 showSolution(vnd_solution)
 print('\n')
