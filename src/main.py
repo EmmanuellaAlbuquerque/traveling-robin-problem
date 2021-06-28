@@ -4,8 +4,8 @@ from trp import TRP
 from vnd import VND
 from copy import deepcopy
 
-# file_path = Path("../instances/n5.txt").absolute()
-file_path = Path("../instances/n6.txt").absolute()
+file_path = Path("../instances/n5.txt").absolute()
+# file_path = Path("../instances/n6.txt").absolute()
 # file_path = Path("../instances/n10p4.txt").absolute()
 # file_path = Path("../instances/n15p5.txt").absolute()
 # file_path = Path("../instances/n29p7A.txt").absolute()

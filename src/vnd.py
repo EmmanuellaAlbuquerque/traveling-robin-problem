@@ -23,10 +23,10 @@ class VND:
                 initial_solution = sLine
                 agent_list = new_agent_list
                 k = 1
-                print('BEST found', 'k.value:', k)
+                # print('BEST found', 'k.value:', k)
             else:
                 k = k + 1
-                print('BEST not found', 'k.value:', k)
+                # print('BEST not found', 'k.value:', k)
         return (initial_solution, agent_list)
 
     def f(self, agent_list):
@@ -104,11 +104,16 @@ class VND:
 
     def swapInter(self, s, agent_list, cost_matrix):
         best_value = float('inf')
+
         best_i_s1 = 0
         best_s1 = 0
 
         best_j_s2 = 0
         best_s2 = 0
+
+        best_of_s1_s2 = float('inf')
+        best_of_s1 = float('inf')
+        best_of_s2 = float('inf')
 
         for s1_id in range(0, len(s)):
             oFs1 = agent_list[s1_id]['cost']
@@ -172,17 +177,17 @@ class VND:
         # print(s[best_s1][best_i_s1], s[best_s2][best_j_s2])
         # print(best_s1, best_s2)
 
-        print('\n')
-        print(best_of_s1_s2 < (
-            agent_list[best_s1]['cost'] + agent_list[best_s2]['cost']))
-        print(('before', agent_list[best_s1]
-              ['cost'] + agent_list[best_s2]['cost']))
-        print(('after', best_of_s1_s2))
-        print('best s1:', best_of_s1)
-        print('best s2:', best_of_s2)
-        print('original s1', agent_list[best_s1]['cost'])
-        print('original s2', agent_list[best_s2]['cost'])
-        print('\n')
+        # print('\n')
+        # print(best_of_s1_s2 < (
+        #     agent_list[best_s1]['cost'] + agent_list[best_s2]['cost']))
+        # print(('before', agent_list[best_s1]
+        #       ['cost'] + agent_list[best_s2]['cost']))
+        # print(('after', best_of_s1_s2))
+        # print('best s1:', best_of_s1)
+        # print('best s2:', best_of_s2)
+        # print('original s1', agent_list[best_s1]['cost'])
+        # print('original s2', agent_list[best_s2]['cost'])
+        # print('\n')
 
         if (best_of_s1_s2 < (agent_list[best_s1]['cost'] + agent_list[best_s2]['cost'])):
             aux = s[best_s1][best_i_s1]
