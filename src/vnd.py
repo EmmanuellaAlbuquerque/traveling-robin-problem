@@ -5,10 +5,16 @@ class VND:
     def __init__(self):
         self.switch = {
             1: self.swap,
-            2: self.swapInter
+            2: self.swapInter,
+        }
+
+        self.neighborhoodMovementsName = {
+            1: "swap",
+            2: "swapInter(1,1)",
         }
 
     def run(self, initial_solution, agent_list, cost_matrix):
+        exc = 0
         r = len(self.switch)
         k = 1  # tipo de estrutura de vizinhança corrente
         while (k <= r):
@@ -20,7 +26,13 @@ class VND:
             # print(new_agent_list)
             # print('----------')
             if (self.f(new_agent_list) < self.f(agent_list)):
+                exc += 1
                 initial_solution = sLine
+                # print(self.neighborhoodMovementsName.get(k), 'exec', exc)
+                # self.showSolution(initial_solution)
+                # print('total cost:', self.getRoutesTotalCost(
+                #     initial_solution, cost_matrix))
+                # print('\n')
                 agent_list = new_agent_list
                 k = 1
                 # print('BEST found', 'k.value:', k)
@@ -198,3 +210,18 @@ class VND:
             agent_list[best_s2]['cost'] = best_of_s2
 
         return (s, agent_list)
+
+    def showSolution(self, solution):
+        for route in solution:
+            print(', '.join(map(str, route)), end=';\n')
+
+    def getRoutesTotalCost(self, solution, cost_matrix):
+        total_cost = 0
+        for route in solution:
+            agent_cost = 0
+            for address in range(0, len(route) - 1):
+                address1 = route[address]
+                address2 = route[address+1]
+                agent_cost += int(cost_matrix[address1][address2])
+            total_cost += agent_cost
+        return total_cost
