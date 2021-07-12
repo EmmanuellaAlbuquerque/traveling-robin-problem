@@ -30,6 +30,18 @@ def f(agent_list):
     return oF
 
 
+def getRoutesTotalCost(solution, cost_matrix):
+    total_cost = 0
+    for route in solution:
+        agent_cost = 0
+        for address in range(0, len(route) - 1):
+            address1 = route[address]
+            address2 = route[address+1]
+            agent_cost += int(cost_matrix[address1][address2])
+        total_cost += agent_cost
+    return total_cost
+
+
 file = open(file_path, 'r')
 
 (dimension, p, cost_matrix) = RobinFileReader(file).getResult()
@@ -41,7 +53,8 @@ trp_solution = trp.run()
 (initial_cost, trp_agent_list) = trp.calculateTotalCost()
 # print(trp_agent_list)
 # showSolution(trp_solution)
-print('total cost:', f(trp_agent_list))
+print('-> total cost:', f(trp_agent_list))
+print('-> recalculated trp:', getRoutesTotalCost(trp_solution, cost_matrix))
 print('\n')
 
 # variable neighbourhood descent solution
@@ -51,4 +64,22 @@ vnd = VND()
     deepcopy(trp_solution), deepcopy(trp_agent_list), cost_matrix)
 # print(vnd_agent_list)
 # showSolution(vnd_solution)
-print('final cost:', f(vnd_agent_list))
+print('-> final cost:', f(vnd_agent_list))
+print('-> recalculated vnd:', getRoutesTotalCost(vnd_solution, cost_matrix))
+print('\n')
+
+
+def calculateSolution(solution, cost_matrix):
+    total_cost = 0
+    for route in solution:
+        for i in range(0, len(route)):
+            if (i != 0):
+                origin = route[i-1]
+                destination = route[i]
+                # print(origin, destination)
+                total_cost += cost_matrix[origin][destination]
+        # print('\n')
+    print(total_cost)
+
+
+calculateSolution(vnd_solution, cost_matrix)

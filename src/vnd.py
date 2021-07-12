@@ -6,15 +6,17 @@ class VND:
         self.switch = {
             1: self.swap,
             2: self.swapInter,
+            3: self.reinsertion
         }
 
         self.neighborhoodMovementsName = {
             1: "swap",
             2: "swapInter(1,1)",
+            3: "re-insertion",
         }
 
     def run(self, initial_solution, agent_list, cost_matrix):
-        exc = 0
+        # exc = 0
         r = len(self.switch)
         k = 1  # tipo de estrutura de vizinhança corrente
         while (k <= r):
@@ -26,7 +28,7 @@ class VND:
             # print(new_agent_list)
             # print('----------')
             if (self.f(new_agent_list) < self.f(agent_list)):
-                exc += 1
+                # exc += 1
                 initial_solution = sLine
                 # print(self.neighborhoodMovementsName.get(k), 'exec', exc)
                 # self.showSolution(initial_solution)
@@ -210,6 +212,52 @@ class VND:
             agent_list[best_s2]['cost'] = best_of_s2
 
         return (s, agent_list)
+
+    def reinsertion(self, initial_solution, agent_list, cost_matrix):
+        best_value = float('inf')
+        best_difference = float('inf')
+        best_i = 0
+        best_j = 0
+        best_s = 0
+
+        for s_id in range(0, len(initial_solution)):
+            s = initial_solution[s_id]
+            oF = agent_list[s_id]['cost']
+
+            # controla o elemento que vai ser removido
+            for i in range(1, len(s) - 1):
+                # controla onde vai inserir o elemento
+                for j in range(1, len(s) - 1):
+                    # simulating reinsertion
+                    swapped_element1 = s[i]
+                    swapped_element2 = s[j]
+                    swapped_element1_left = s[i-1]
+                    swapped_element1_right = s[i+1]
+                    swapped_element2_left = s[j-1]
+                    swapped_element2_right = s[j+1]
+
+                    oFLine = oF - \
+                        cost_matrix[swapped_element1_left][swapped_element1] - \
+                        cost_matrix[swapped_element1][swapped_element1_right] - \
+                        cost_matrix[swapped_element2][swapped_element2_right] + \
+                        cost_matrix[swapped_element1_left][swapped_element1_right] + \
+                        cost_matrix[swapped_element2][swapped_element1] + \
+                        cost_matrix[swapped_element1][swapped_element2_right]
+
+                    if ((oFLine - oF) < best_difference):
+                        best_difference = oFLine - oF
+
+                        best_value = oFLine
+                        best_i = i
+                        best_j = j
+                        best_s = s_id
+
+        if best_value < agent_list[best_s]['cost']:
+            agent_list[best_s]['cost'] = best_value
+            element = initial_solution[best_s].pop(best_i)
+            initial_solution[best_s].insert(best_j, element)
+
+        return (initial_solution, agent_list)
 
     def showSolution(self, solution):
         for route in solution:
