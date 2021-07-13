@@ -4,15 +4,17 @@ from copy import deepcopy
 class VND:
     def __init__(self):
         self.switch = {
-            1: self.swap,
-            2: self.swapInter,
-            3: self.reinsertion
+            1: self.swapInter,
+            2: self.reinsertion,
+            3: self.intra_2opt,
+            4: self.swap,
         }
 
         self.neighborhoodMovementsName = {
-            1: "swap",
-            2: "swapInter(1,1)",
-            3: "re-insertion",
+            1: "swapInter(1,1)",
+            2: "re-insertion",
+            3: "2-opt",
+            4: "swap",
         }
 
     def run(self, initial_solution, agent_list, cost_matrix):
@@ -51,12 +53,15 @@ class VND:
 
     def swap(self, initial_solution, agent_list, cost_matrix):
         best_value = float('inf')
+        best_difference = float('inf')
         best_i = 0
         best_j = 0
         best_s = 0
+
         for s_id in range(0, len(initial_solution)):
-            s = initial_solution[s_id][:]
+            s = initial_solution[s_id]
             oF = agent_list[s_id]['cost']
+            # print(s, 'cost:', oF)
 
             # for with improved constant factors
             for i in range(1, len(s) - 1):
@@ -73,34 +78,46 @@ class VND:
                     if (j == i+1):
                         oFLine = oF - \
                             cost_matrix[swapped_element1_left][swapped_element1] - \
+                            cost_matrix[swapped_element1][swapped_element1_right] - \
                             cost_matrix[swapped_element2][swapped_element2_right] + \
                             cost_matrix[swapped_element1_left][swapped_element2] + \
+                            cost_matrix[swapped_element2][swapped_element2_left] + \
                             cost_matrix[swapped_element1][swapped_element2_right]
                         # print('f0',
                         #       '- c(', swapped_element1_left, swapped_element1,
+                        #       ') - c(', swapped_element1, swapped_element1_right,
                         #       ') - c(', swapped_element2, swapped_element2_right,
                         #       ') + c(', swapped_element1_left, swapped_element2,
+                        #       ') + c(', swapped_element2, swapped_element2_left,
                         #       ') + c(', swapped_element1, swapped_element2_right, ')')
                     else:
                         oFLine = oF - \
                             cost_matrix[swapped_element1_left][swapped_element1] - \
+                            cost_matrix[swapped_element1][swapped_element1_right] - \
+                            cost_matrix[swapped_element2_left][swapped_element2] - \
                             cost_matrix[swapped_element2][swapped_element2_right] + \
                             cost_matrix[swapped_element1_left][swapped_element2] + \
+                            cost_matrix[swapped_element2][swapped_element1_right] + \
+                            cost_matrix[swapped_element2_left][swapped_element1] + \
                             cost_matrix[swapped_element1][swapped_element2_right]
 
                         # print('f0',
                         #       '- c(', swapped_element1_left, swapped_element1,
+                        #       ') - c(', swapped_element1, swapped_element1_right,
+                        #       ') - c(', swapped_element2_left, swapped_element2,
                         #       ') - c(', swapped_element2, swapped_element2_right,
                         #       ') + c(', swapped_element1_left, swapped_element2,
+                        #       ') + c(', swapped_element2, swapped_element1_right,
+                        #       ') + c(', swapped_element2_left, swapped_element1,
                         #       ') + c(', swapped_element1, swapped_element2_right, ')')
-                    if (oFLine < best_value):
+
+                    if ((oFLine - oF) < best_difference):
+                        best_difference = oFLine - oF
                         best_value = oFLine
                         best_i = i
                         best_j = j
                         best_s = s_id
-                    # print('ObjectFunction(result):', oFLine)
-            # print(
-            #     '---------------------------------------------------------------------')
+
         if best_value < agent_list[best_s]['cost']:
             # print('agent', best_s+1)
             # print(initial_solution[best_s],
@@ -256,6 +273,66 @@ class VND:
             agent_list[best_s]['cost'] = best_value
             element = initial_solution[best_s].pop(best_i)
             initial_solution[best_s].insert(best_j, element)
+
+        return (initial_solution, agent_list)
+
+    def intra_2opt(self, initial_solution, agent_list, cost_matrix):
+        best_value = float('inf')
+        best_difference = float('inf')
+        best_i = 0
+        best_j = 0
+        best_s = 0
+
+        for s_id in range(0, len(initial_solution)):
+            s = initial_solution[s_id]
+            oF = agent_list[s_id]['cost']
+
+            # controla o primeiro ponto de corte
+            for i in range(1, len(s) - 1):
+                # controla o segundo ponto de corte
+                for j in range(i+4, len(s) - 1):
+                    # simulating 2-opt
+                    swapped_element1 = s[i]
+                    swapped_element2 = s[j]
+                    swapped_element1_left = s[i-1]
+                    swapped_element1_right = s[i+1]
+                    swapped_element2_left = s[j-1]
+                    swapped_element2_right = s[j+1]
+
+                    oFLine = oF - \
+                        cost_matrix[swapped_element1_left][swapped_element1] - \
+                        cost_matrix[swapped_element2][swapped_element2_right] + \
+                        cost_matrix[swapped_element1_left][swapped_element2] + \
+                        cost_matrix[swapped_element1][swapped_element2_right]
+                    # print('f0',
+                    #       '- c(', swapped_element1_left, swapped_element1,
+                    #       ') - c(', swapped_element2, swapped_element2_right,
+                    #       ') + c(', swapped_element1_left, swapped_element2,
+                    #       ') + c(', swapped_element1, swapped_element2_right, ')')
+
+                # no final lembrar de trocar o miolo, inverter
+                    if ((oFLine - oF) < best_difference):
+                        best_value = oFLine
+                        best_difference = oFLine - oF
+
+                        best_i = i
+                        best_j = j
+                        best_s = s_id
+
+        if best_value < agent_list[best_s]['cost']:
+            croppedList = initial_solution[best_s][best_i:best_j+1]
+
+            leftCrop = initial_solution[best_s][:best_i]
+            rightCrop = initial_solution[best_s][best_j+1:]
+
+            reversedList = list(reversed(croppedList))
+
+            # leftCrop + reversedList + rightCrop
+            leftCrop.extend(reversedList)
+            leftCrop.extend(rightCrop)
+
+            initial_solution[best_s] = leftCrop
+            agent_list[best_s]['cost'] = best_value
 
         return (initial_solution, agent_list)
 
