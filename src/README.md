@@ -1,3 +1,8 @@
+### Grupo: Trackers
+Integrantes:<br>
+Emmanuella Faustino Albuquerque<br>
+Luyza Ellen Domingos do Nascimento<br>
+Leandro Gomes do Nascimento<br>
 
 ### Entrada
 Grafo Completo, Conexo e Simétrico(não-orientado)
@@ -48,5 +53,7 @@ Obs: algoritmo guloso usado para dar uma solução inicial para o problema
 - VND
 
 ### Movimentos de vizinhança (ou Estruturas de vizinhança) utilizados
-- Intra:  Swap
+- Intra: Swap
 - Inter: Swap(1, 1)
+- Intra: 2-opt
+- Intra: Reinsertion
