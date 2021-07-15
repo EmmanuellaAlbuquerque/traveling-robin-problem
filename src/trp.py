@@ -72,13 +72,9 @@ class TRP():
                 address1 = route[address]
                 address2 = route[address+1]
                 agent_cost += int(self.cost_matrix[address1][address2])
-                # print('a1', address1, 'a2', address2, 'cost',
-                #       int(self.cost_matrix[address1][address2]))
-            # print('(', 'agent', agent_id, ', cost:', agent_cost, ')')
             agent_cost_list.append({'agent_id': agent_id, 'cost': agent_cost})
             total_cost += agent_cost
             agent_id += 1
-        # print('Total cost:', total_cost)
         return total_cost, agent_cost_list
 
     def run(self, bt=True):
@@ -97,9 +93,11 @@ class TRP():
                         u = self.partial_solution[i]
                         v = self.partial_solution[i + 1]
 
-                        cost_expression = int(self.cost_matrix[u][x]) + \
-                            int(self.cost_matrix[x][v]) - \
-                            int(self.cost_matrix[u][v])
+                        cost_expression = self.cost_matrix[u][x] + \
+                            self.cost_matrix[x][v] - self.cost_matrix[u][v]
+
+                        # verifica se o custo de inserir o novo vértice
+                        # no meio dos 2 é maior ou menor do que deixar o antigo
                         if (lowest_cost["cost"] > cost_expression):
                             lowest_cost["cost"] = cost_expression
                             lowest_cost["u"] = u
@@ -108,6 +106,7 @@ class TRP():
 
                         # self.printAnalysisOfCheaperInsertion(
                         #     cost_expression, x, u, v)
+
                 if (len(self.q)):
                     position = self.partial_solution.index(
                         lowest_cost["u"]) + 1
@@ -134,11 +133,9 @@ class TRP():
                 if(len(self.q) == 0):
                     self.solution.append(self.partial_solution)
             elif (len(self.q)):  # case self.q == 1
-                # print(self.q, 'q-rest')
                 self.solution.append([0] + self.q + [0])
                 break
             else:
                 break
 
-        # print(self.solution, 'solution')
         return self.solution

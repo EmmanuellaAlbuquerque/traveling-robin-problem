@@ -3,6 +3,7 @@ from robin_file_reader import RobinFileReader
 from trp import TRP
 from vnd import VND
 from copy import deepcopy
+import time
 
 # file_path = Path("../instances/n5.txt").absolute()
 # file_path = Path("../instances/n6.txt").absolute()
@@ -42,33 +43,6 @@ def getRoutesTotalCost(solution, cost_matrix):
     return total_cost
 
 
-file = open(file_path, 'r')
-
-(dimension, p, cost_matrix) = RobinFileReader(file).getResult()
-
-# constructive algorithm solution
-print('constructive algorithm solution')
-trp = TRP(dimension, p, cost_matrix)
-trp_solution = trp.run()
-(initial_cost, trp_agent_list) = trp.calculateTotalCost()
-# print(trp_agent_list)
-# showSolution(trp_solution)
-print('-> total cost:', f(trp_agent_list))
-print('-> recalculated trp:', getRoutesTotalCost(trp_solution, cost_matrix))
-print('\n')
-
-# variable neighbourhood descent solution
-print('variable neighbourhood descent solution')
-vnd = VND()
-(vnd_solution, vnd_agent_list) = vnd.run(
-    deepcopy(trp_solution), deepcopy(trp_agent_list), cost_matrix)
-# print(vnd_agent_list)
-# showSolution(vnd_solution)
-print('-> final cost:', f(vnd_agent_list))
-print('-> recalculated vnd:', getRoutesTotalCost(vnd_solution, cost_matrix))
-print('\n')
-
-
 def calculateSolution(solution, cost_matrix):
     total_cost = 0
     for route in solution:
@@ -82,4 +56,35 @@ def calculateSolution(solution, cost_matrix):
     print(total_cost)
 
 
-calculateSolution(vnd_solution, cost_matrix)
+# calculateSolution(vnd_solution, cost_matrix)
+
+
+file = open(file_path, 'r')
+
+(dimension, p, cost_matrix) = RobinFileReader(file).getResult()
+
+start_time_trp = time.time()
+# constructive algorithm solution
+print('constructive algorithm solution')
+trp = TRP(dimension, p, cost_matrix)
+trp_solution = trp.run()
+(initial_cost, trp_agent_list) = trp.calculateTotalCost()
+# print(trp_agent_list)
+# showSolution(trp_solution)
+print('-> total cost:', f(trp_agent_list))
+print('-> recalculated trp:', getRoutesTotalCost(trp_solution, cost_matrix))
+print("Tempo Gasto: TRP %.2f" % (time.time() - start_time_trp), "seconds ")
+print('\n')
+
+start_time_vnd = time.time()
+# variable neighbourhood descent solution
+print('variable neighbourhood descent solution')
+vnd = VND()
+(vnd_solution, vnd_agent_list) = vnd.run(
+    deepcopy(trp_solution), deepcopy(trp_agent_list), cost_matrix)
+# print(vnd_agent_list)
+# showSolution(vnd_solution)
+print('-> final cost:', f(vnd_agent_list))
+print('-> recalculated vnd:', getRoutesTotalCost(vnd_solution, cost_matrix))
+print("Tempo Gasto: VND %.2f" % (time.time() - start_time_vnd), "seconds ")
+print('\n')
